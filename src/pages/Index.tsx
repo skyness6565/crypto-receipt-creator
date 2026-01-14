@@ -22,6 +22,17 @@ const Index = () => {
   const [notes, setNotes] = useState('');
   const [logo, setLogo] = useState<string | null>(null);
   const [transactionId] = useState(generateTransactionId());
+  const [transactionDate, setTransactionDate] = useState<Date>(new Date());
+
+  const formattedDate = useMemo(() => {
+    return transactionDate.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }, [transactionDate]);
 
   const receiptData: ReceiptData = useMemo(() => ({
     crypto,
@@ -32,14 +43,8 @@ const Index = () => {
     notes,
     logo,
     transactionId,
-    date: new Date().toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }), [crypto, usdtAmount, cryptoAmount, walletAddress, status, notes, logo, transactionId]);
+    date: formattedDate
+  }), [crypto, usdtAmount, cryptoAmount, walletAddress, status, notes, logo, transactionId, formattedDate]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,6 +102,8 @@ const Index = () => {
                   setNotes={setNotes}
                   logo={logo}
                   setLogo={setLogo}
+                  transactionDate={transactionDate}
+                  setTransactionDate={setTransactionDate}
                 />
               </div>
 
