@@ -1,4 +1,4 @@
-import { Check, Clock, X, Copy, Download } from 'lucide-react';
+import { Check, Clock, X, Copy, Download, AlertTriangle } from 'lucide-react';
 import { ReceiptData, TransactionStatus } from '@/data/cryptoData';
 import { useRef } from 'react';
 import html2canvas from 'html2canvas';
@@ -7,10 +7,28 @@ interface ReceiptPreviewProps {
   data: ReceiptData;
 }
 
-const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Check; className: string }> = {
-  successful: { label: 'Successful', icon: Check, className: 'status-success' },
-  pending: { label: 'Pending', icon: Clock, className: 'status-pending' },
-  failed: { label: 'Failed', icon: X, className: 'status-failed' }
+const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Check; className: string; bgClass: string; iconBg: string }> = {
+  successful: { 
+    label: 'Successful', 
+    icon: Check, 
+    className: 'status-success',
+    bgClass: 'bg-success/10 border-success/30',
+    iconBg: 'bg-success'
+  },
+  pending: { 
+    label: 'Pending', 
+    icon: Clock, 
+    className: 'status-pending',
+    bgClass: 'bg-warning/10 border-warning/30',
+    iconBg: 'bg-warning'
+  },
+  failed: { 
+    label: 'Failed', 
+    icon: X, 
+    className: 'status-failed',
+    bgClass: 'bg-destructive/10 border-destructive/30',
+    iconBg: 'bg-destructive'
+  }
 };
 
 const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
@@ -42,9 +60,30 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
 
   return (
     <div className="space-y-4">
-      <div ref={receiptRef} className="receipt-card p-6 space-y-6">
+      <div ref={receiptRef} className="receipt-card p-6 space-y-5">
+        {/* Big Status Icon at Top */}
+        <div className={`flex flex-col items-center justify-center py-6 rounded-xl border ${status.bgClass}`}>
+          <div className={`w-20 h-20 rounded-full ${status.iconBg} flex items-center justify-center mb-3 ${data.status === 'pending' ? 'animate-pulse' : ''}`}>
+            <StatusIcon className="w-10 h-10 text-white" strokeWidth={3} />
+          </div>
+          <p className={`text-xl font-bold ${data.status === 'successful' ? 'text-success' : data.status === 'pending' ? 'text-warning' : 'text-destructive'}`}>
+            {status.label.toUpperCase()}
+          </p>
+        </div>
+
+        {/* Payment Notes Warning - At Top */}
+        {data.notes && (
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/30">
+            <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-destructive mb-1">Payment Notes</p>
+              <p className="text-sm text-destructive/90">{data.notes}</p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-2">
           <div className="flex items-center gap-3">
             {data.logo ? (
               <img src={data.logo} alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
@@ -57,10 +96,6 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
               <h3 className="font-semibold text-lg">Payment Receipt</h3>
               <p className="text-sm text-muted-foreground">Transaction Details</p>
             </div>
-          </div>
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${status.className}`}>
-            <StatusIcon className="w-4 h-4" />
-            <span>{status.label}</span>
           </div>
         </div>
 
@@ -116,13 +151,6 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
             <p className="text-sm text-muted-foreground">Date & Time</p>
             <p className="font-medium">{data.date}</p>
           </div>
-
-          {data.notes && (
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Payment Notes</p>
-              <p className="text-sm">{data.notes}</p>
-            </div>
-          )}
         </div>
 
         {/* Footer */}
