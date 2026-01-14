@@ -139,6 +139,28 @@
   .select-field {
     @apply bg-secondary/50 border border-border/50 rounded-lg px-4 py-3 text-foreground cursor-pointer hover:bg-secondary/70 transition-all duration-200;
   }
+
+  .warning-glow {
+    animation: warning-pulse 2s ease-in-out infinite;
+    box-shadow: 
+      0 0 20px hsl(0 72% 51% / 0.3),
+      inset 0 0 20px hsl(0 72% 51% / 0.05);
+  }
+
+  @keyframes warning-pulse {
+    0%, 100% {
+      box-shadow: 
+        0 0 15px hsl(0 72% 51% / 0.2),
+        inset 0 0 15px hsl(0 72% 51% / 0.03);
+      border-color: hsl(0 72% 51% / 0.3);
+    }
+    50% {
+      box-shadow: 
+        0 0 30px hsl(0 72% 51% / 0.4),
+        inset 0 0 25px hsl(0 72% 51% / 0.08);
+      border-color: hsl(0 72% 51% / 0.6);
+    }
+  }
 }
 
 @layer utilities {
