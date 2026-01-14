@@ -73,11 +73,23 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
 
         {/* Payment Notes Warning - At Top */}
         {data.notes && (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/30">
-            <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-destructive mb-1">Payment Notes</p>
-              <p className="text-sm text-destructive/90">{data.notes}</p>
+          <div className="warning-glow relative overflow-hidden rounded-xl bg-gradient-to-r from-destructive/20 via-destructive/10 to-destructive/20 border-2 border-destructive/40 p-5">
+            {/* Decorative corner accents */}
+            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-destructive/60 rounded-tl-lg" />
+            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-destructive/60 rounded-tr-lg" />
+            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-destructive/60 rounded-bl-lg" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-destructive/60 rounded-br-lg" />
+            
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-destructive/30 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <p className="text-base font-bold text-destructive tracking-wide uppercase mb-2">
+                  ⚠️ Important Notice
+                </p>
+                <p className="text-sm text-destructive/90 font-medium leading-relaxed">{data.notes}</p>
+              </div>
             </div>
           </div>
         )}

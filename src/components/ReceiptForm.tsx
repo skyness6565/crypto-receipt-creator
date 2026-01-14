@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
+import { Loader2, TrendingUp } from 'lucide-react';
 import { CryptoOption, TransactionStatus } from '@/data/cryptoData';
 import CryptoSelector from './CryptoSelector';
 import StatusSelector from './StatusSelector';
 import LogoUploader from './LogoUploader';
+import { useCryptoPrice, calculateCryptoAmount } from '@/hooks/useCryptoPrice';
 
 interface ReceiptFormProps {
   crypto: CryptoOption | null;
@@ -36,6 +39,16 @@ const ReceiptForm = ({
   logo,
   setLogo
 }: ReceiptFormProps) => {
+  const { price, loading, error } = useCryptoPrice(crypto?.id || null);
+
+  // Auto-calculate crypto amount when USDT amount changes
+  useEffect(() => {
+    if (price && usdtAmount) {
+      const calculated = calculateCryptoAmount(usdtAmount, price);
+      setCryptoAmount(calculated);
+    }
+  }, [usdtAmount, price, setCryptoAmount]);
+
   return (
     <div className="glass-card p-6 space-y-6">
       <div className="space-y-2">
@@ -53,6 +66,28 @@ const ReceiptForm = ({
       <div className="space-y-2">
         <label className="text-sm font-medium text-muted-foreground">Cryptocurrency</label>
         <CryptoSelector selected={crypto} onSelect={setCrypto} />
+        
+        {/* Live Price Indicator */}
+        {crypto && (
+          <div className="flex items-center gap-2 mt-2">
+            {loading ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Fetching live price...</span>
+              </div>
+            ) : price ? (
+              <div className="flex items-center gap-2 text-sm">
+                <TrendingUp className="w-3.5 h-3.5 text-success" />
+                <span className="text-success font-medium">
+                  1 {crypto.symbol} = ${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
+                </span>
+                <span className="text-xs text-muted-foreground">(Live)</span>
+              </div>
+            ) : error ? (
+              <div className="text-sm text-destructive">{error}</div>
+            ) : null}
+          </div>
+        )}
       </div>
 
       {/* Amount Fields */}
@@ -66,18 +101,27 @@ const ReceiptForm = ({
             onChange={(e) => setUsdtAmount(e.target.value)}
             className="input-field w-full font-mono"
           />
+          <p className="text-xs text-muted-foreground">Enter USDT to auto-calculate</p>
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">
             Amount ({crypto?.symbol || 'Crypto'})
           </label>
-          <input
-            type="text"
-            placeholder="0.00"
-            value={cryptoAmount}
-            onChange={(e) => setCryptoAmount(e.target.value)}
-            className="input-field w-full font-mono"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="0.00"
+              value={cryptoAmount}
+              onChange={(e) => setCryptoAmount(e.target.value)}
+              className="input-field w-full font-mono pr-10"
+            />
+            {loading && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
+            )}
+          </div>
+          {price && usdtAmount && (
+            <p className="text-xs text-success">Auto-calculated from live price</p>
+          )}
         </div>
       </div>
 
