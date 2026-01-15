@@ -1,3 +1,16 @@
+import btcLogo from '@/assets/crypto/bitcoin-btc-logo.svg';
+import ethLogo from '@/assets/crypto/ethereum-eth-logo.svg';
+import usdtLogo from '@/assets/crypto/tether-usdt-logo.svg';
+import bnbLogo from '@/assets/crypto/bnb-bnb-logo.svg';
+import usdcLogo from '@/assets/crypto/usd-coin-usdc-logo.svg';
+import xrpLogo from '@/assets/crypto/xrp-xrp-logo.svg';
+import solLogo from '@/assets/crypto/solana-sol-logo.svg';
+import adaLogo from '@/assets/crypto/cardano-ada-logo.svg';
+import dogeLogo from '@/assets/crypto/dogecoin-doge-logo.svg';
+import trxLogo from '@/assets/crypto/tron-trx-logo.svg';
+import ltcLogo from '@/assets/crypto/litecoin-ltc-logo.svg';
+import maticLogo from '@/assets/crypto/polygon-matic-logo.svg';
+
 export interface CryptoOption {
   id: string;
   name: string;
@@ -11,84 +24,84 @@ export const cryptoOptions: CryptoOption[] = [
     id: 'btc',
     name: 'Bitcoin',
     symbol: 'BTC',
-    logo: 'https://cryptologos.cc/logos/bitcoin-btc-logo.svg',
+    logo: btcLogo,
     color: '#F7931A'
   },
   {
     id: 'eth',
     name: 'Ethereum',
     symbol: 'ETH',
-    logo: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
+    logo: ethLogo,
     color: '#627EEA'
   },
   {
     id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
-    logo: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+    logo: usdtLogo,
     color: '#26A17B'
   },
   {
     id: 'bnb',
     name: 'BNB',
     symbol: 'BNB',
-    logo: 'https://cryptologos.cc/logos/bnb-bnb-logo.svg',
+    logo: bnbLogo,
     color: '#F3BA2F'
   },
   {
     id: 'usdc',
     name: 'USD Coin',
     symbol: 'USDC',
-    logo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+    logo: usdcLogo,
     color: '#2775CA'
   },
   {
     id: 'xrp',
     name: 'XRP',
     symbol: 'XRP',
-    logo: 'https://cryptologos.cc/logos/xrp-xrp-logo.svg',
+    logo: xrpLogo,
     color: '#23292F'
   },
   {
     id: 'sol',
     name: 'Solana',
     symbol: 'SOL',
-    logo: 'https://cryptologos.cc/logos/solana-sol-logo.svg',
+    logo: solLogo,
     color: '#9945FF'
   },
   {
     id: 'ada',
     name: 'Cardano',
     symbol: 'ADA',
-    logo: 'https://cryptologos.cc/logos/cardano-ada-logo.svg',
+    logo: adaLogo,
     color: '#0033AD'
   },
   {
     id: 'doge',
     name: 'Dogecoin',
     symbol: 'DOGE',
-    logo: 'https://cryptologos.cc/logos/dogecoin-doge-logo.svg',
+    logo: dogeLogo,
     color: '#C3A634'
   },
   {
     id: 'trx',
     name: 'TRON',
     symbol: 'TRX',
-    logo: 'https://cryptologos.cc/logos/tron-trx-logo.svg',
+    logo: trxLogo,
     color: '#FF0013'
   },
   {
     id: 'ltc',
     name: 'Litecoin',
     symbol: 'LTC',
-    logo: 'https://cryptologos.cc/logos/litecoin-ltc-logo.svg',
+    logo: ltcLogo,
     color: '#BFBBBB'
   },
   {
     id: 'matic',
     name: 'Polygon',
     symbol: 'MATIC',
-    logo: 'https://cryptologos.cc/logos/polygon-matic-logo.svg',
+    logo: maticLogo,
     color: '#8247E5'
   }
 ];
