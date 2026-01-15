@@ -20,6 +20,8 @@ interface ReceiptFormProps {
   setCryptoAmount: (amount: string) => void;
   walletAddress: string;
   setWalletAddress: (address: string) => void;
+  recipientName: string;
+  setRecipientName: (name: string) => void;
   status: TransactionStatus;
   setStatus: (status: TransactionStatus) => void;
   notes: string;
@@ -39,6 +41,8 @@ const ReceiptForm = ({
   setCryptoAmount,
   walletAddress,
   setWalletAddress,
+  recipientName,
+  setRecipientName,
   status,
   setStatus,
   notes,
@@ -156,6 +160,18 @@ const ReceiptForm = ({
         />
       </div>
 
+      {/* Recipient Name */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-muted-foreground">Recipient Name</label>
+        <input
+          type="text"
+          placeholder="Enter recipient name"
+          value={recipientName}
+          onChange={(e) => setRecipientName(e.target.value)}
+          className="input-field w-full"
+        />
+      </div>
+
       {/* Date & Time Selection */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-muted-foreground">Transaction Date & Time</label>
@@ -165,7 +181,7 @@ const ReceiptForm = ({
               <Button
                 variant="outline"
                 className={cn(
-                  "flex-1 justify-start text-left font-normal bg-secondary/50 border-white/10 hover:bg-secondary",
+                  "flex-1 justify-start text-left font-normal bg-secondary border-border hover:bg-secondary/80",
                   !transactionDate && "text-muted-foreground"
                 )}
               >
@@ -184,7 +200,7 @@ const ReceiptForm = ({
             </PopoverContent>
           </Popover>
           
-          <div className="flex items-center gap-2 bg-secondary/50 border border-white/10 rounded-lg px-3">
+          <div className="flex items-center gap-2 bg-secondary border border-border rounded-lg px-3">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <input
               type="number"
