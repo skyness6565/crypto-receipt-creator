@@ -55,11 +55,12 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
 
       const canvas = await html2canvas(receiptRef.current, {
         backgroundColor: '#ffffff',
-        scale: 4, // Higher scale for crisp output
+        scale: Math.max(3, Math.ceil(window.devicePixelRatio * 3)), // crisp output on all screens
         useCORS: true,
         allowTaint: true,
         logging: false,
         imageTimeout: 15000,
+        foreignObjectRendering: true,
       });
       
       const link = document.createElement('a');
