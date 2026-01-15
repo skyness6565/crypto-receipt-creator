@@ -7,27 +7,24 @@ interface ReceiptPreviewProps {
   data: ReceiptData;
 }
 
-const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Check; className: string; bgClass: string; iconBg: string }> = {
+const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Check; className: string; textColor: string }> = {
   successful: { 
     label: 'Successful', 
     icon: Check, 
-    className: 'status-success',
-    bgClass: 'bg-success/10 border-success/30',
-    iconBg: 'bg-success'
+    className: 'bg-success',
+    textColor: 'text-success'
   },
   pending: { 
     label: 'Pending', 
     icon: Clock, 
-    className: 'status-pending',
-    bgClass: 'bg-warning/10 border-warning/30',
-    iconBg: 'bg-warning'
+    className: 'bg-warning',
+    textColor: 'text-warning'
   },
   failed: { 
     label: 'Failed', 
     icon: X, 
-    className: 'status-failed',
-    bgClass: 'bg-destructive/10 border-destructive/30',
-    iconBg: 'bg-destructive'
+    className: 'bg-destructive',
+    textColor: 'text-destructive'
   }
 };
 
@@ -45,7 +42,7 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
     
     try {
       const canvas = await html2canvas(receiptRef.current, {
-        backgroundColor: '#0f1419',
+        backgroundColor: '#ffffff',
         scale: 2,
       });
       
@@ -60,127 +57,143 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
 
   return (
     <div className="space-y-4">
-      <div ref={receiptRef} className="receipt-card p-6 space-y-5">
-        {/* Big Status Icon at Top */}
-        <div className={`flex flex-col items-center justify-center py-6 rounded-xl border ${status.bgClass}`}>
-          <div className={`w-20 h-20 rounded-full ${status.iconBg} flex items-center justify-center mb-3 ${data.status === 'pending' ? 'animate-pulse' : ''}`}>
-            <StatusIcon className="w-10 h-10 text-white" strokeWidth={3} />
-          </div>
-          <p className={`text-xl font-bold ${data.status === 'successful' ? 'text-success' : data.status === 'pending' ? 'text-warning' : 'text-destructive'}`}>
-            {status.label.toUpperCase()}
-          </p>
-        </div>
-
-        {/* Payment Notes Warning - At Top */}
-        {data.notes && (
-          <div className="warning-glow relative overflow-hidden rounded-xl bg-gradient-to-r from-destructive/20 via-destructive/10 to-destructive/20 border-2 border-destructive/40 p-5">
-            {/* Decorative corner accents */}
-            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-destructive/60 rounded-tl-lg" />
-            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-destructive/60 rounded-tr-lg" />
-            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-destructive/60 rounded-bl-lg" />
-            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-destructive/60 rounded-br-lg" />
-            
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-destructive/30 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle className="w-5 h-5 text-destructive" />
-              </div>
-              <div className="flex-1">
-                <p className="text-base font-bold text-destructive tracking-wide uppercase mb-2">
-                  ⚠️ Important Notice
-                </p>
-                <p className="text-sm text-destructive/90 font-medium leading-relaxed">{data.notes}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Header */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center gap-3">
-            {data.logo ? (
-              <img src={data.logo} alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
+      <div ref={receiptRef} className="receipt-card bg-white">
+        {/* Blue Header with Logo */}
+        <div className="bg-gradient-to-br from-primary to-primary/90 pt-8 pb-6 flex justify-center">
+          <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-2 border-white/30">
+            {data.crypto ? (
+              <img
+                src={data.crypto.logo}
+                alt={data.crypto.name}
+                className="w-10 h-10"
+                onError={(e) => {
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${data.crypto?.symbol}&background=random`;
+                }}
+              />
+            ) : data.logo ? (
+              <img src={data.logo} alt="Logo" className="w-10 h-10 object-contain" />
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <span className="text-primary font-bold">CR</span>
-              </div>
+              <span className="text-white font-bold text-xl">CR</span>
             )}
-            <div>
-              <h3 className="font-semibold text-lg">Payment Receipt</h3>
-              <p className="text-sm text-muted-foreground">Transaction Details</p>
-            </div>
           </div>
         </div>
 
-        {/* Crypto Info */}
-        {data.crypto && (
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-secondary/30 border border-border/50">
-            <img
-              src={data.crypto.logo}
-              alt={data.crypto.name}
-              className="w-12 h-12 rounded-full"
-              onError={(e) => {
-                e.currentTarget.src = `https://ui-avatars.com/api/?name=${data.crypto?.symbol}&background=random`;
-              }}
-            />
-            <div className="flex-1">
-              <p className="text-2xl font-bold">{data.cryptoAmount || '0.00'} {data.crypto.symbol}</p>
-              <p className="text-muted-foreground">≈ ${data.usdtAmount || '0.00'} USDT</p>
-            </div>
-          </div>
-        )}
+        {/* Status */}
+        <div className="text-center py-6">
+          <p className={`text-xl font-semibold ${status.textColor}`}>
+            {status.label}
+          </p>
+          <p className="text-muted-foreground text-sm mt-1">You're sending</p>
+          <p className="text-3xl font-bold text-foreground mt-2">
+            ${data.usdtAmount || '0.00'}
+          </p>
+          {data.crypto && data.cryptoAmount && (
+            <p className="text-muted-foreground text-sm mt-1">
+              ≈ {data.cryptoAmount} {data.crypto.symbol}
+            </p>
+          )}
+        </div>
 
-        {/* Details */}
-        <div className="space-y-4">
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Transaction ID</p>
+        {/* Wallet Address Box */}
+        <div className="px-6 pb-4">
+          <div className="wallet-box">
+            <p className="text-xs text-muted-foreground mb-1">Recipient Wallet Address:</p>
             <div className="flex items-center gap-2">
-              <p className="font-mono text-sm">{data.transactionId}</p>
-              <button
-                onClick={() => copyToClipboard(data.transactionId)}
-                className="p-1 hover:bg-accent rounded transition-colors"
-              >
-                <Copy className="w-3.5 h-3.5 text-muted-foreground" />
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Wallet Address</p>
-            <div className="flex items-center gap-2">
-              <p className="font-mono text-sm break-all">{data.walletAddress || 'Not provided'}</p>
+              <p className="font-mono text-sm text-foreground break-all flex-1">
+                {data.walletAddress || 'Not provided'}
+              </p>
               {data.walletAddress && (
                 <button
                   onClick={() => copyToClipboard(data.walletAddress)}
-                  className="p-1 hover:bg-accent rounded transition-colors flex-shrink-0"
+                  className="p-1.5 hover:bg-accent rounded transition-colors flex-shrink-0"
                 >
                   <Copy className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
               )}
             </div>
           </div>
+        </div>
 
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Date & Time</p>
-            <p className="font-medium">{data.date}</p>
+        {/* Payment Notes Warning */}
+        {data.notes && (
+          <div className="px-6 pb-4">
+            <div className="warning-glow bg-destructive/10 border border-destructive/30 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-destructive mb-1">Important Notice</p>
+                  <p className="text-sm text-destructive/80">{data.notes}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Divider */}
+        <div className="mx-6 border-t border-border" />
+
+        {/* Transaction Details */}
+        <div className="px-6 py-4 space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Your {data.crypto?.name || 'Crypto'} Transfer request is complete and will be reviewed for processing.
+          </p>
+
+          <div className="flex justify-between items-center py-2">
+            <p className="text-sm text-muted-foreground">Reference Number:</p>
+            <div className="flex items-center gap-1">
+              <p className="text-sm font-semibold text-foreground font-mono">{data.transactionId.slice(0, 10)}</p>
+              <button
+                onClick={() => copyToClipboard(data.transactionId)}
+                className="p-1 hover:bg-accent rounded transition-colors"
+              >
+                <Copy className="w-3 h-3 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center py-2">
+            <p className="text-sm text-muted-foreground">Recipient:</p>
+            <p className="text-sm font-semibold text-foreground">{data.recipientName || 'Not specified'}</p>
+          </div>
+
+          <div className="flex justify-between items-center py-2">
+            <p className="text-sm text-muted-foreground">Date:</p>
+            <p className="text-sm font-semibold text-foreground">{data.date}</p>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="pt-4 border-t border-border/50">
-          <p className="text-xs text-center text-muted-foreground">
-            This receipt was generated for record purposes only
+        {/* Divider */}
+        <div className="mx-6 border-t border-border" />
+
+        {/* Footer Message */}
+        <div className="px-6 py-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            Thank you for your request. Your transaction is {data.status === 'successful' ? 'complete' : data.status === 'pending' ? 'still pending' : 'failed'}.
           </p>
+          {data.usdtAmount && (
+            <p className="text-sm text-muted-foreground mt-1">
+              Service Charge: $0.00
+            </p>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="px-6 pb-6 grid grid-cols-2 gap-3">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-3 rounded-full border border-border text-foreground font-medium hover:bg-accent transition-colors"
+          >
+            Back
+          </button>
+          <button
+            onClick={downloadReceipt}
+            className="px-4 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            Done
+          </button>
         </div>
       </div>
-
-      {/* Download Button */}
-      <button
-        onClick={downloadReceipt}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors glow-effect"
-      >
-        <Download className="w-5 h-5" />
-        <span>Download Receipt</span>
-      </button>
     </div>
   );
 };

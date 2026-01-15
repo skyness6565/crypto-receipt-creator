@@ -100,6 +100,7 @@ export interface ReceiptData {
   usdtAmount: string;
   cryptoAmount: string;
   walletAddress: string;
+  recipientName: string;
   status: TransactionStatus;
   notes: string;
   logo: string | null;

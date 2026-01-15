@@ -18,6 +18,7 @@ const Index = () => {
   const [usdtAmount, setUsdtAmount] = useState('');
   const [cryptoAmount, setCryptoAmount] = useState('');
   const [walletAddress, setWalletAddress] = useState('');
+  const [recipientName, setRecipientName] = useState('');
   const [status, setStatus] = useState<TransactionStatus>('successful');
   const [notes, setNotes] = useState('');
   const [logo, setLogo] = useState<string | null>(null);
@@ -39,12 +40,13 @@ const Index = () => {
     usdtAmount,
     cryptoAmount,
     walletAddress,
+    recipientName,
     status,
     notes,
     logo,
     transactionId,
     date: formattedDate
-  }), [crypto, usdtAmount, cryptoAmount, walletAddress, status, notes, logo, transactionId, formattedDate]);
+  }), [crypto, usdtAmount, cryptoAmount, walletAddress, recipientName, status, notes, logo, transactionId, formattedDate]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -96,6 +98,8 @@ const Index = () => {
                   setCryptoAmount={setCryptoAmount}
                   walletAddress={walletAddress}
                   setWalletAddress={setWalletAddress}
+                  recipientName={recipientName}
+                  setRecipientName={setRecipientName}
                   status={status}
                   setStatus={setStatus}
                   notes={notes}
