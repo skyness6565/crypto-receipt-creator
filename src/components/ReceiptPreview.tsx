@@ -1,7 +1,8 @@
-import { Check, Clock, X, Copy, Download, AlertTriangle } from 'lucide-react';
+import { Check, Clock, X, Copy, Download, AlertTriangle, FileText } from 'lucide-react';
 import { ReceiptData, TransactionStatus } from '@/data/cryptoData';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface ReceiptPreviewProps {
   data: ReceiptData;
@@ -30,38 +31,45 @@ const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Chec
 
 const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
   const receiptRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
   const status = statusConfig[data.status];
-  const StatusIcon = status.icon;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 
-  const downloadReceipt = async () => {
-    if (!receiptRef.current) return;
-    
-    try {
-      // Wait for images to load before capturing
-      const images = receiptRef.current.querySelectorAll('img');
-      await Promise.all(
-        Array.from(images).map((img) => {
-          if (img.complete) return Promise.resolve();
-          return new Promise((resolve) => {
-            img.onload = resolve;
-            img.onerror = resolve;
-          });
-        })
-      );
+  const waitForImages = async (element: HTMLElement) => {
+    const images = element.querySelectorAll('img');
+    await Promise.all(
+      Array.from(images).map((img) => {
+        if (img.complete) return Promise.resolve();
+        return new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      })
+    );
+  };
 
-      const canvas = await html2canvas(receiptRef.current, {
-        backgroundColor: '#ffffff',
-        scale: Math.max(3, Math.ceil(window.devicePixelRatio * 3)), // crisp output on all screens
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        imageTimeout: 15000,
-        foreignObjectRendering: true,
-      });
+  const captureReceipt = async () => {
+    if (!receiptRef.current) return null;
+    await waitForImages(receiptRef.current);
+    
+    return html2canvas(receiptRef.current, {
+      backgroundColor: '#ffffff',
+      scale: 4,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      imageTimeout: 15000,
+    });
+  };
+
+  const downloadReceipt = async () => {
+    setIsExporting(true);
+    try {
+      const canvas = await captureReceipt();
+      if (!canvas) return;
       
       const link = document.createElement('a');
       link.download = `crypto-receipt-${data.transactionId}.png`;
@@ -69,6 +77,55 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
       link.click();
     } catch (error) {
       console.error('Failed to download receipt:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const downloadPDF = async () => {
+    setIsExporting(true);
+    try {
+      const canvas = await captureReceipt();
+      if (!canvas) return;
+
+      // A4 dimensions in mm
+      const a4Width = 210;
+      const a4Height = 297;
+      
+      // Calculate dimensions to fit receipt centered on A4
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = imgWidth / imgHeight;
+      
+      // Max width with margins (20mm each side)
+      const maxWidth = a4Width - 40;
+      const maxHeight = a4Height - 40;
+      
+      let pdfWidth = maxWidth;
+      let pdfHeight = pdfWidth / ratio;
+      
+      if (pdfHeight > maxHeight) {
+        pdfHeight = maxHeight;
+        pdfWidth = pdfHeight * ratio;
+      }
+      
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      
+      // Center the receipt on the page
+      const x = (a4Width - pdfWidth) / 2;
+      const y = 20; // 20mm from top
+      
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      pdf.addImage(imgData, 'PNG', x, y, pdfWidth, pdfHeight);
+      pdf.save(`crypto-receipt-${data.transactionId}.pdf`);
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -197,19 +254,30 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="px-6 pb-6 grid grid-cols-2 gap-3">
+        <div className="px-6 pb-6 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={downloadReceipt}
+              disabled={isExporting}
+              className="px-4 py-3 rounded-full border border-border text-foreground font-medium hover:bg-accent transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <Download className="w-4 h-4" />
+              PNG
+            </button>
+            <button
+              onClick={downloadPDF}
+              disabled={isExporting}
+              className="px-4 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <FileText className="w-4 h-4" />
+              PDF
+            </button>
+          </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-3 rounded-full border border-border text-foreground font-medium hover:bg-accent transition-colors"
+            className="w-full px-4 py-3 rounded-full border border-border text-foreground font-medium hover:bg-accent transition-colors"
           >
-            Back
-          </button>
-          <button
-            onClick={downloadReceipt}
-            className="px-4 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Done
+            Create New Receipt
           </button>
         </div>
       </div>
