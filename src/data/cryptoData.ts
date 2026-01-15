@@ -1,15 +1,15 @@
-import btcLogo from '@/assets/crypto/bitcoin-btc-logo.svg';
-import ethLogo from '@/assets/crypto/ethereum-eth-logo.svg';
-import usdtLogo from '@/assets/crypto/tether-usdt-logo.svg';
-import bnbLogo from '@/assets/crypto/bnb-bnb-logo.svg';
-import usdcLogo from '@/assets/crypto/usd-coin-usdc-logo.svg';
-import xrpLogo from '@/assets/crypto/xrp-xrp-logo.svg';
-import solLogo from '@/assets/crypto/solana-sol-logo.svg';
-import adaLogo from '@/assets/crypto/cardano-ada-logo.svg';
-import dogeLogo from '@/assets/crypto/dogecoin-doge-logo.svg';
-import trxLogo from '@/assets/crypto/tron-trx-logo.svg';
-import ltcLogo from '@/assets/crypto/litecoin-ltc-logo.svg';
-import maticLogo from '@/assets/crypto/polygon-matic-logo.svg';
+import btcLogo from '@/assets/crypto/bitcoin-btc-logo.png';
+import ethLogo from '@/assets/crypto/ethereum-eth-logo.png';
+import usdtLogo from '@/assets/crypto/tether-usdt-logo.png';
+import bnbLogo from '@/assets/crypto/bnb-bnb-logo.png';
+import usdcLogo from '@/assets/crypto/usd-coin-usdc-logo.png';
+import xrpLogo from '@/assets/crypto/xrp-xrp-logo.png';
+import solLogo from '@/assets/crypto/solana-sol-logo.png';
+import adaLogo from '@/assets/crypto/cardano-ada-logo.png';
+import dogeLogo from '@/assets/crypto/dogecoin-doge-logo.png';
+import trxLogo from '@/assets/crypto/tron-trx-logo.png';
+import ltcLogo from '@/assets/crypto/litecoin-ltc-logo.png';
+import maticLogo from '@/assets/crypto/polygon-matic-logo.png';
 
 export interface CryptoOption {
   id: string;
