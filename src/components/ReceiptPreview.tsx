@@ -41,14 +41,30 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
     if (!receiptRef.current) return;
     
     try {
+      // Wait for images to load before capturing
+      const images = receiptRef.current.querySelectorAll('img');
+      await Promise.all(
+        Array.from(images).map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        })
+      );
+
       const canvas = await html2canvas(receiptRef.current, {
         backgroundColor: '#ffffff',
-        scale: 2,
+        scale: 4, // Higher scale for crisp output
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        imageTimeout: 15000,
       });
       
       const link = document.createElement('a');
       link.download = `crypto-receipt-${data.transactionId}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = canvas.toDataURL('image/png', 1.0);
       link.click();
     } catch (error) {
       console.error('Failed to download receipt:', error);
@@ -66,12 +82,14 @@ const ReceiptPreview = ({ data }: ReceiptPreviewProps) => {
                 src={data.crypto.logo}
                 alt={data.crypto.name}
                 className="w-10 h-10"
+                crossOrigin="anonymous"
+                style={{ imageRendering: 'crisp-edges' }}
                 onError={(e) => {
-                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${data.crypto?.symbol}&background=random`;
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${data.crypto?.symbol}&background=random&size=128`;
                 }}
               />
             ) : data.logo ? (
-              <img src={data.logo} alt="Logo" className="w-10 h-10 object-contain" />
+              <img src={data.logo} alt="Logo" className="w-10 h-10 object-contain" crossOrigin="anonymous" />
             ) : (
               <span className="text-white font-bold text-xl">CR</span>
             )}
