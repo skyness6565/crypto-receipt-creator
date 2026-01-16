@@ -213,9 +213,6 @@ const ReceiptPreview = ({
           <p className="text-sm text-muted-foreground">
             Thank you for your request. Your transaction is {data.status === 'successful' ? 'complete' : data.status === 'pending' ? 'still pending' : 'failed'}.
           </p>
-          {data.usdtAmount && <p className="text-sm text-muted-foreground mt-1">
-              Service Charge: $0.00
-            </p>}
         </div>
 
         {/* Action Buttons */}
